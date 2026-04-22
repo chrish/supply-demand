@@ -358,10 +358,6 @@ function findOrigins(currentDate) {
      if (!isValid) {
          return false;
      }
-     local currentLevel = GSIndustry.GetProductionLevel(industryId);
-     if (!GSIndustry.SetProductionLevel(industryId, currentLevel, false, "")) {
-         return false;
-     }
 
     // Lock the industry against vanilla production decreases and closures the
     // moment we identify it as a valid origin. Previously this flag was only
