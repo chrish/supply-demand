@@ -1,4 +1,4 @@
-v2026-04-20
+v2026-04-21
 - Test
 v2026-01-10 bugfixes
 - Ignore intermediate cargo types (like steel) in scoring so all categories can be fulfilled.
