@@ -343,28 +343,40 @@ function findOrigins(currentDate) {
     return origins;
 }
 
-function isValidOriginIndustry(industryId, validOriginIndustryTypes) {
-    if (!GSIndustry.IsValidIndustry(industryId)) {
-        return false;
-    }
+ function isValidOriginIndustry(industryId, validOriginIndustryTypes) {
+     if (!GSIndustry.IsValidIndustry(industryId)) {
+         return false;
+     }
+     local industryType = GSIndustry.GetIndustryType(industryId);
+     local isValid = false;
+     foreach (validType in validOriginIndustryTypes) {
+         if (validType == industryType) {
+             isValid = true;
+             break;
+         }
+     }
+     if (!isValid) {
+         return false;
+     }
+     local currentLevel = GSIndustry.GetProductionLevel(industryId);
+     if (!GSIndustry.SetProductionLevel(industryId, currentLevel, false, "")) {
+         return false;
+     }
 
-    local industryType = GSIndustry.GetIndustryType(industryId);
-    local isValid = false;
-    foreach (validType in validOriginIndustryTypes) {
-        if (validType == industryType) {
-            isValid = true;
-            break;
-        }
-    }
-    if (!isValid) {
-        return false;
-    }
+    // Lock the industry against vanilla production decreases and closures the
+    // moment we identify it as a valid origin. Previously this flag was only
+    // set inside increaseSupply() *after* a boost, which meant OpenTTD's
+    // built-in monthly production re-roll could still drop production on any
+    // industry the script hadn't boosted yet.
+    GSIndustry.SetControlFlags(
+        industryId,
+        GSIndustry.INDCTL_NO_PRODUCTION_DECREASE
+      | GSIndustry.INDCTL_NO_CLOSURE
+      | GSIndustry.INDCTL_EXTERNAL_PROD_LEVEL
+    );
+     return true;
 
-    local currentLevel = GSIndustry.GetProductionLevel(industryId);
-    if (!GSIndustry.SetProductionLevel(industryId, currentLevel, false, "")) {
-        return false;
-    }
-
+     
     return true;
 }
 
